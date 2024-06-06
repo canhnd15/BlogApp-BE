@@ -1,2 +1,2 @@
 # Database Design
-![Alt text](./diagram.png 'database design')
+![Alt text](./database.png 'database design')
