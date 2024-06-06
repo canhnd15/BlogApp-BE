@@ -1,10 +1,12 @@
 package com.davidnguyen.blogs.entity;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import java.util.Date;
 import java.util.Set;
@@ -23,7 +25,7 @@ public class Post {
     @Column(nullable = false, name = "title")
     private String title;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "created_at")

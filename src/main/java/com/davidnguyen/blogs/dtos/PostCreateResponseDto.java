@@ -1,13 +1,10 @@
 package com.davidnguyen.blogs.dtos;
 
-import com.davidnguyen.blogs.entity.Reaction;
-import com.davidnguyen.blogs.entity.Tag;
-import com.davidnguyen.blogs.entity.User;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
@@ -16,7 +13,7 @@ public class PostCreateResponseDto {
     private String title;
     private String content;
     private Date createAt;
-    private User user;
-    private Set<Tag> tags;
-    private Set<Reaction> reactions;
+    private UserResponseDto user;
+    private List<TagResponseDto> tags;
+    private List<ReactionResponseDto> reactions;
 }
