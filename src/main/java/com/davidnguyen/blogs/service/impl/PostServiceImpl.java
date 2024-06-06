@@ -10,15 +10,23 @@ import com.davidnguyen.blogs.repository.PostRepository;
 import com.davidnguyen.blogs.repository.TagRepository;
 import com.davidnguyen.blogs.repository.UserRepository;
 import com.davidnguyen.blogs.service.PostService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
+    private final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
+
     @Autowired
     private UserRepository userRepository;
 
@@ -64,7 +72,7 @@ public class PostServiceImpl implements PostService {
                     .build()));
         }
 
-        PostCreateResponseDto response = PostCreateResponseDto.builder()
+        PostResponseDto response = PostResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -86,5 +94,71 @@ public class PostServiceImpl implements PostService {
                         .response(response)
                         .build()
         );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getAllPost() {
+        List<Post> posts = postRepository.findAllWithTags();
+
+        List<PostResponseDto> result = convertToDto(posts);
+
+        return ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .isSuccess(true)
+                        .response(result)
+                        .message("")
+                        .build()
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> findAllWithPaging(String title, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Post> posts = postRepository.findByTitle(title, pageable).getContent();
+
+        List<PostResponseDto> result = convertToDto(posts);
+
+        return ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .isSuccess(true)
+                        .response(result)
+                        .message("")
+                        .build()
+        );
+    }
+
+    private List<PostResponseDto> convertToDto(List<Post> posts) {
+        List<PostResponseDto> result = new ArrayList<>();
+
+        for (Post post: posts) {
+            List<TagResponseDto> tagResp = post.getTags().stream()
+                    .map(tag -> TagResponseDto.builder()
+                            .id(tag.getId())
+                            .name(tag.getName())
+                            .status(tag.getStatus())
+                            .build())
+                    .collect(Collectors.toList());
+
+            List<ReactionResponseDto> responseResp = post.getReactions().stream()
+                    .map(reaction -> ReactionResponseDto.builder()
+                            .id(reaction.getId())
+                            .type(reaction.getType())
+                            .build()).collect(Collectors.toList());
+
+            PostResponseDto responseDto = PostResponseDto.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .createAt(post.getCreateAt())
+                    .updateAt(post.getUpdatedAt())
+                    .status(post.getStatus())
+                    .tags(tagResp)
+                    .reactions(responseResp)
+                    .build();
+
+            result.add(responseDto);
+        }
+
+        return result;
     }
 }

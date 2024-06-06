@@ -8,12 +8,13 @@ import java.util.List;
 
 @Data
 @Builder
-public class PostCreateResponseDto {
+public class PostResponseDto {
     private Long id;
     private String title;
     private String status;
     private String content;
     private Date createAt;
+    private Date updateAt;
     private UserResponseDto user;
     private List<TagResponseDto> tags;
     private List<ReactionResponseDto> reactions;
