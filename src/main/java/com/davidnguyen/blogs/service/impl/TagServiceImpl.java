@@ -1,0 +1,51 @@
+package com.davidnguyen.blogs.service.impl;
+
+import com.davidnguyen.blogs.dtos.ApiResponseDto;
+import com.davidnguyen.blogs.dtos.TagCreateRequest;
+import com.davidnguyen.blogs.dtos.TagCreateResponse;
+import com.davidnguyen.blogs.entity.Tag;
+import com.davidnguyen.blogs.repository.TagRepository;
+import com.davidnguyen.blogs.service.TagService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TagServiceImpl implements TagService {
+    private final TagRepository tagRepository;
+
+    public TagServiceImpl(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> createTag(TagCreateRequest req) {
+        //1. check if tag is exist by tag's name.
+        Tag existingTag = tagRepository.findByName(req.getName());
+        if (existingTag != null) {
+            return ResponseEntity.ok(
+                    ApiResponseDto.builder()
+                            .isSuccess(false)
+                            .response(null)
+                            .message("Tag with name: " + req.getName() + " already exist.")
+                            .build()
+            );
+        }
+
+        Tag createdTag = Tag.builder()
+                .name(req.getName())
+                .build();
+
+        Tag savedTag = tagRepository.save(createdTag);
+
+        return ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .isSuccess(true)
+                        .response(TagCreateResponse.builder()
+                                .id(savedTag.getId())
+                                .name(savedTag.getName())
+                                .build())
+                        .message("Tag created successfully!")
+                        .build()
+        );
+    }
+}
