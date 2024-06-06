@@ -1,6 +1,6 @@
 package com.davidnguyen.blogs.factory;
 
-import com.davidnguyen.blogs.entity.ERole;
+import com.davidnguyen.blogs.enums.ERole;
 import com.davidnguyen.blogs.entity.Role;
 import com.davidnguyen.blogs.exceptions.RoleNotFoundException;
 import com.davidnguyen.blogs.repository.RoleRepository;

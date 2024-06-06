@@ -18,7 +18,7 @@ public class TagController {
 
     @PostMapping("")
     public ResponseEntity<ApiResponseDto<?>> createTag(@RequestBody @Valid TagCreateRequest req) {
-        return tagService.createTag(req);
+        return tagService.create(req);
     }
 
     @GetMapping("")

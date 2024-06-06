@@ -11,6 +11,7 @@ import java.util.List;
 public class PostCreateResponseDto {
     private Long id;
     private String title;
+    private String status;
     private String content;
     private Date createAt;
     private UserResponseDto user;

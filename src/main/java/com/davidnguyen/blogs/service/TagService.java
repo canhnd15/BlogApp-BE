@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface TagService {
     ResponseEntity<ApiResponseDto<?>> getAllTags();
-    ResponseEntity<ApiResponseDto<?>> createTag(TagCreateRequest req);
+    ResponseEntity<ApiResponseDto<?>> create(TagCreateRequest req);
 }

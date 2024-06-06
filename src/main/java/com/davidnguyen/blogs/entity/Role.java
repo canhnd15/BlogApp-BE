@@ -1,5 +1,6 @@
 package com.davidnguyen.blogs.entity;
 
+import com.davidnguyen.blogs.enums.ERole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

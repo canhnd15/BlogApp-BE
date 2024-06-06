@@ -4,6 +4,7 @@ import com.davidnguyen.blogs.dtos.*;
 import com.davidnguyen.blogs.entity.Post;
 import com.davidnguyen.blogs.entity.Tag;
 import com.davidnguyen.blogs.entity.User;
+import com.davidnguyen.blogs.enums.PostStatus;
 import com.davidnguyen.blogs.exceptions.UserNotFoundException;
 import com.davidnguyen.blogs.repository.PostRepository;
 import com.davidnguyen.blogs.repository.TagRepository;
@@ -36,9 +37,11 @@ public class PostServiceImpl implements PostService {
         List<String> tagName = req.getTags();
         List<Tag> tags = tagRepository.findAllByNameIn(tagName);
 
+        String postStatus = req.getIsDraft() ? String.valueOf(PostStatus.DRAFT) : String.valueOf(PostStatus.PENDING);
         Post post = Post.builder()
                 .title(req.getTitle())
                 .content(req.getContent())
+                .status(postStatus)
                 .createAt(new Date())
                 .user(author)
                 .tags(new HashSet<>(tags))
@@ -65,6 +68,7 @@ public class PostServiceImpl implements PostService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .status(post.getStatus())
                 .createAt(post.getCreateAt())
                 .user(UserResponseDto.builder()
                         .id(author.getId())

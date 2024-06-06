@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Set;
@@ -25,11 +26,17 @@ public class Post {
     @Column(nullable = false, name = "title")
     private String title;
 
+    @Column(nullable = false, name = "status")
+    private String status;
+
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "created_at")
     private Date createAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

@@ -1,4 +1,4 @@
-package com.davidnguyen.blogs.entity;
+package com.davidnguyen.blogs.enums;
 
 public enum ERole {
     ROLE_USER,

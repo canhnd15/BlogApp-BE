@@ -1,6 +1,6 @@
 package com.davidnguyen.blogs.seeders;
 
-import com.davidnguyen.blogs.entity.ERole;
+import com.davidnguyen.blogs.enums.ERole;
 import com.davidnguyen.blogs.entity.Role;
 import com.davidnguyen.blogs.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;

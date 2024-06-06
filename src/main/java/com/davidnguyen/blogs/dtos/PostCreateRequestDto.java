@@ -14,6 +14,8 @@ public class PostCreateRequestDto {
     @NotNull(message = "Post's title is required.")
     private String title;
 
+    private Boolean isDraft;
+
     @NotNull(message = "Post's title is required.")
     private String content;
 
