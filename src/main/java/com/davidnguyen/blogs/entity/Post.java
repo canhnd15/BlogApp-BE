@@ -28,6 +28,9 @@ public class Post {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false, unique = true)
+    private String slug;
+
     @Column(name = "created_at")
     private Date createAt;
 

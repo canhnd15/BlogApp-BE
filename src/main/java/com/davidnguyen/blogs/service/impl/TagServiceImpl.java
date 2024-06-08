@@ -4,6 +4,7 @@ import com.davidnguyen.blogs.dtos.ApiResponseDto;
 import com.davidnguyen.blogs.dtos.TagCreateRequest;
 import com.davidnguyen.blogs.dtos.TagCreateResponse;
 import com.davidnguyen.blogs.entity.Tag;
+import com.davidnguyen.blogs.enums.ResponseStatus;
 import com.davidnguyen.blogs.enums.TagStatus;
 import com.davidnguyen.blogs.repository.TagRepository;
 import com.davidnguyen.blogs.service.TagService;
@@ -27,7 +28,7 @@ public class TagServiceImpl implements TagService {
 
         return ResponseEntity.ok(
                 ApiResponseDto.builder()
-                        .isSuccess(true)
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
                         .response(tags)
                         .message("Get all tags successfully!")
                         .build()
@@ -41,7 +42,7 @@ public class TagServiceImpl implements TagService {
         if (existingTag != null) {
             return ResponseEntity.ok(
                     ApiResponseDto.builder()
-                            .isSuccess(false)
+                            .status(String.valueOf(ResponseStatus.FAIL))
                             .response(null)
                             .message("Tag with name: " + req.getName() + " already exist.")
                             .build()
@@ -59,7 +60,7 @@ public class TagServiceImpl implements TagService {
 
         return ResponseEntity.ok(
                 ApiResponseDto.builder()
-                        .isSuccess(true)
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
                         .response(TagCreateResponse.builder()
                                 .id(savedTag.getId())
                                 .name(savedTag.getName())

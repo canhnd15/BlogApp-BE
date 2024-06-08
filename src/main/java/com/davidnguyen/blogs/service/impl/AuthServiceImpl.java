@@ -6,6 +6,7 @@ import com.davidnguyen.blogs.dtos.SignInResponseDto;
 import com.davidnguyen.blogs.dtos.SignUpRequestDto;
 import com.davidnguyen.blogs.entity.Role;
 import com.davidnguyen.blogs.entity.User;
+import com.davidnguyen.blogs.enums.ResponseStatus;
 import com.davidnguyen.blogs.exceptions.RoleNotFoundException;
 import com.davidnguyen.blogs.exceptions.UserAlreadyExistsException;
 import com.davidnguyen.blogs.factory.RoleFactory;
@@ -59,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
         userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponseDto.builder()
-                        .isSuccess(true)
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
                         .message("User account has been successfully created!")
                         .build()
         );
@@ -89,8 +90,8 @@ public class AuthServiceImpl implements AuthService {
 
         return ResponseEntity.ok(
                 ApiResponseDto.builder()
-                        .isSuccess(true)
-                        .message("Sign in successfull!")
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
+                        .message("Sign in successfully!")
                         .response(signInResponseDto)
                         .build()
         );

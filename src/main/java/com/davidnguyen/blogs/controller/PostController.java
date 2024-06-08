@@ -1,7 +1,7 @@
 package com.davidnguyen.blogs.controller;
 
 import com.davidnguyen.blogs.dtos.ApiResponseDto;
-import com.davidnguyen.blogs.dtos.PostCreateRequestDto;
+import com.davidnguyen.blogs.dtos.PostCreateRequest;
 import com.davidnguyen.blogs.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class PostController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ApiResponseDto<?>> create(@RequestBody @Valid PostCreateRequestDto req) {
+    public ResponseEntity<ApiResponseDto<?>> create(@RequestBody @Valid PostCreateRequest req) {
         return postService.create(req);
     }
 
@@ -32,5 +32,11 @@ public class PostController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size) {
         return postService.findAllWithPaging(title, page, size);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public ResponseEntity<ApiResponseDto<?>> getPostById(@PathVariable Long id) {
+        return postService.findPostById(id);
     }
 }

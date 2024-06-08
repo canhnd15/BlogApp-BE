@@ -5,6 +5,8 @@ import com.davidnguyen.blogs.entity.Post;
 import com.davidnguyen.blogs.entity.Tag;
 import com.davidnguyen.blogs.entity.User;
 import com.davidnguyen.blogs.enums.PostStatus;
+import com.davidnguyen.blogs.enums.ResponseStatus;
+import com.davidnguyen.blogs.exceptions.PostNotFoundException;
 import com.davidnguyen.blogs.exceptions.UserNotFoundException;
 import com.davidnguyen.blogs.repository.PostRepository;
 import com.davidnguyen.blogs.repository.TagRepository;
@@ -13,7 +15,6 @@ import com.davidnguyen.blogs.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public ResponseEntity<ApiResponseDto<?>> create(PostCreateRequestDto req) {
+    public ResponseEntity<ApiResponseDto<?>> create(PostCreateRequest req) {
         User author = userRepository.findById(req.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id:" + req.getUserId()));
 
@@ -90,7 +91,7 @@ public class PostServiceImpl implements PostService {
 
         return ResponseEntity.ok(
                 ApiResponseDto.builder()
-                        .isSuccess(true)
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
                         .response(response)
                         .build()
         );
@@ -104,7 +105,7 @@ public class PostServiceImpl implements PostService {
 
         return ResponseEntity.ok(
                 ApiResponseDto.builder()
-                        .isSuccess(true)
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
                         .response(result)
                         .message("")
                         .build()
@@ -120,11 +121,22 @@ public class PostServiceImpl implements PostService {
 
         return ResponseEntity.ok(
                 ApiResponseDto.builder()
-                        .isSuccess(true)
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
                         .response(result)
                         .message("")
                         .build()
         );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> findPostById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException("Post not found with id " + id));
+
+        PostResponseDto resp = PostResponseDto.builder()
+
+                .build();
+        return null;
     }
 
     private List<PostResponseDto> convertToDto(List<Post> posts) {

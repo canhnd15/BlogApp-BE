@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class PostCreateRequestDto {
+public class PostCreateRequest {
     @NotBlank(message = "Post's title is not allow blank.")
     @NotNull(message = "Post's title is required.")
     private String title;
