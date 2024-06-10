@@ -3,6 +3,7 @@ package com.davidnguyen.blogs.service.impl;
 import com.davidnguyen.blogs.dtos.ApiResponseDto;
 import com.davidnguyen.blogs.dtos.CommentCreateRequest;
 import com.davidnguyen.blogs.dtos.CommentResponseDto;
+import com.davidnguyen.blogs.dtos.CommentUpdateRequest;
 import com.davidnguyen.blogs.entity.Comment;
 import com.davidnguyen.blogs.entity.Post;
 import com.davidnguyen.blogs.entity.User;
@@ -20,11 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -79,6 +76,43 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
+    public ResponseEntity<ApiResponseDto<?>> update(CommentUpdateRequest req, Long commentId) {
+        Comment existedComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("Comment not found by id " + commentId));
+
+        existedComment.setContent(req.getContent());
+        existedComment.setUpdatedAt(new Date());
+        existedComment = commentRepository.save(existedComment);
+
+        String updatedAt = DateFormatter.getInstance().format(existedComment.getUpdatedAt());
+
+        CommentResponseDto resp = new CommentResponseDto(existedComment.getId(), existedComment.getContent(),
+                updatedAt, existedComment.getUser().getUsername(), existedComment.getPost().getId(),
+                existedComment.getParent() != null ? existedComment.getParent().getId() : null);
+
+        return ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
+                        .response(resp)
+                        .message("Comment updated successfully!")
+                        .build()
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> delete(Long id) {
+        commentRepository.deleteById(id);
+
+        return ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
+                        .message("Comment deleted successfully!")
+                        .build()
+        );
+    }
+
+    @Override
     public ResponseEntity<ApiResponseDto<?>> findCommentByPostId(Long postId) {
         List<Object[]> comments = commentRepository.findCommentByPostId(postId);
 
@@ -121,9 +155,5 @@ public class CommentServiceImpl implements CommentService {
                         .message("Get comment by post " + postId + " successfully!")
                         .build()
         );
-    }
-
-    private String convertDate(Date date) {
-        return DateFormatter.getInstance().format(date);
     }
 }
