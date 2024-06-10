@@ -25,6 +25,9 @@ public class Post {
     @Column(nullable = false, name = "status")
     private String status;
 
+    @Column(nullable = false, name = "draft")
+    private Integer draft;
+
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 

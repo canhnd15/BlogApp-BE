@@ -17,6 +17,6 @@ public class PostResponseDto {
     private Date updateAt;
     private UserResponseDto user;
     private List<TagResponseDto> tags;
-    private List<CommentResponseDto> comments;
+//    private List<CommentResponseDto> comments;
     private List<ReactionResponseDto> reactions;
 }

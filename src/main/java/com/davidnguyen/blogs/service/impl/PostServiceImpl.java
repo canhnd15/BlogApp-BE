@@ -110,6 +110,36 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public ResponseEntity<ApiResponseDto<?>> update(PostUpdateRequest req, Long id) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> updateStatus(PostUpdateStatusRequest req, Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException("Post not found with id " + id));
+
+        String updatedStatus = req.getStatus();
+
+        if(String.valueOf(PostStatus.DELETE).equals(updatedStatus)) {
+            post.setStatus(String.valueOf(PostStatus.DELETE));
+        } else if (String.valueOf(PostStatus.PENDING).equals(updatedStatus)) {
+            post.setStatus(String.valueOf(PostStatus.PENDING));
+        } else if(String.valueOf(PostStatus.CREATED).equals(updatedStatus)) {
+            post.setStatus(String.valueOf(PostStatus.CREATED));
+        }
+
+        postRepository.save(post);
+
+        return ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
+                        .message("Update post's status successfully!")
+                        .build()
+        );
+    }
+
+    @Override
     public ResponseEntity<ApiResponseDto<?>> getAllPost() {
         List<Post> posts = postRepository.findAllWithTags();
 
