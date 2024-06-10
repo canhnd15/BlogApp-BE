@@ -21,6 +21,11 @@ public class PostController {
         return postService.create(req);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponseDto<?>> delete(@PathVariable("id") Long id) {
+        return postService.delete(id);
+    }
+
     @GetMapping("")
     public ResponseEntity<ApiResponseDto<?>> getAllPosts() {
         return postService.getAllPost();

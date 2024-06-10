@@ -93,8 +93,20 @@ public class PostServiceImpl implements PostService {
                 ApiResponseDto.builder()
                         .status(String.valueOf(ResponseStatus.SUCCESS))
                         .response(response)
+                        .message("Post created successfully!")
                         .build()
         );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> delete(Long id) {
+        postRepository.deleteById(id);
+
+        return  ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
+                        .message("Post deleted successfully!")
+                        .build());
     }
 
     @Override

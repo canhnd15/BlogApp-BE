@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 public interface PostService {
     ResponseEntity<ApiResponseDto<?>> create(PostCreateRequest req);
 
+    ResponseEntity<ApiResponseDto<?>> delete(Long id);
+
     ResponseEntity<ApiResponseDto<?>> getAllPost();
 
     ResponseEntity<ApiResponseDto<?>> findAllWithPaging(String title, int page, int size);

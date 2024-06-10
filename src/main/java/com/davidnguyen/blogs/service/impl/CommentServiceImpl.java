@@ -114,7 +114,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> findCommentByPostId(Long postId) {
-        List<Object[]> comments = commentRepository.findCommentByPostId(postId);
+        Post existedPost = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("Post not found with id " + postId));
+
+        List<Object[]> comments = commentRepository.findCommentByPostId(existedPost.getId());
 
         List<CommentResponseDto> response = new ArrayList<>();
         Map<Long, CommentResponseDto> commentMap = new HashMap<>();

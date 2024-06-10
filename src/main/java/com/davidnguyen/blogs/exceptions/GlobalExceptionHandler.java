@@ -55,4 +55,28 @@ public class GlobalExceptionHandler {
                                 .build()
                 );
     }
+
+    @ExceptionHandler(value = PostNotFoundException.class)
+    public ResponseEntity<ApiResponseDto<?>> PostNotFoundExceptionHandler(PostNotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ApiResponseDto.builder()
+                                .status(String.valueOf(ResponseStatus.FAIL))
+                                .message(exception.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(value = CommentNotFoundException.class)
+    public ResponseEntity<ApiResponseDto<?>> CommentNotFoundExceptionHandler(CommentNotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ApiResponseDto.builder()
+                                .status(String.valueOf(ResponseStatus.FAIL))
+                                .message(exception.getMessage())
+                                .build()
+                );
+    }
 }
