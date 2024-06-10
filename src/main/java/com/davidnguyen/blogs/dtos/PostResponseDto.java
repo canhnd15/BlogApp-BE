@@ -3,7 +3,6 @@ package com.davidnguyen.blogs.dtos;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -13,10 +12,10 @@ public class PostResponseDto {
     private String title;
     private String status;
     private String content;
-    private Date createAt;
-    private Date updateAt;
+    private String slug;
+    private String createAt;
+    private String updateAt;
     private UserResponseDto user;
     private List<TagResponseDto> tags;
-//    private List<CommentResponseDto> comments;
     private List<ReactionResponseDto> reactions;
 }

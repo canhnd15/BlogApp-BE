@@ -17,7 +17,5 @@ public interface PostService {
 
     ResponseEntity<ApiResponseDto<?>> getAllPost();
 
-    ResponseEntity<ApiResponseDto<?>> findAllWithPaging(String title, int page, int size);
-
     ResponseEntity<ApiResponseDto<?>> findPostById(Long id);
 }

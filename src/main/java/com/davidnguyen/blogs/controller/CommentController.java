@@ -4,12 +4,14 @@ import com.davidnguyen.blogs.dtos.ApiResponseDto;
 import com.davidnguyen.blogs.dtos.CommentCreateRequest;
 import com.davidnguyen.blogs.dtos.CommentUpdateRequest;
 import com.davidnguyen.blogs.service.CommentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/comment")
+@Tag(name = "Comment", description = "API for managing blog comments")
 public class CommentController {
     private final CommentService commentService;
 

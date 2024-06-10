@@ -57,12 +57,4 @@ public class PostController {
     public ResponseEntity<ApiResponseDto<?>> getAllPosts() {
         return postService.getAllPost();
     }
-
-    @GetMapping("/paging")
-    public ResponseEntity<ApiResponseDto<?>> getAllWithPaging(
-            @RequestParam(name = "title") String title,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size) {
-        return postService.findAllWithPaging(title, page, size);
-    }
 }

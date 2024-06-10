@@ -12,6 +12,7 @@ import com.davidnguyen.blogs.repository.PostRepository;
 import com.davidnguyen.blogs.repository.TagRepository;
 import com.davidnguyen.blogs.repository.UserRepository;
 import com.davidnguyen.blogs.service.PostService;
+import com.davidnguyen.blogs.singleton.DateFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +42,17 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public ResponseEntity<ApiResponseDto<?>> create(PostCreateRequest req) {
         User author = userRepository.findById(req.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found with id:" + req.getUserId()));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + req.getUserId()));
 
         List<String> tagName = req.getTags();
         List<Tag> tags = tagRepository.findAllByNameIn(tagName);
 
-        String postStatus = req.getIsDraft() ? String.valueOf(PostStatus.DRAFT) : String.valueOf(PostStatus.PENDING);
         Post post = Post.builder()
                 .title(req.getTitle())
                 .content(req.getContent())
-                .status(postStatus)
+                .status(String.valueOf(PostStatus.PENDING))
+                .isDraft(req.getIsDraft())
+                .slug(req.getSlug())
                 .createAt(new Date())
                 .user(author)
                 .tags(new HashSet<>(tags))
@@ -60,25 +62,18 @@ public class PostServiceImpl implements PostService {
         // convert tags -> tags response.
         List<TagResponseDto> tagsResp = new ArrayList<>();
         post.getTags().forEach(tag -> tagsResp.add(TagResponseDto.builder()
-                        .id(tag.getId())
-                        .name(tag.getName())
+                .id(tag.getId())
+                .name(tag.getName())
+                .status(tag.getStatus())
                 .build()));
-
-        // convert reactions -> reactions responses.
-        List<ReactionResponseDto> reactionsResp = new ArrayList<>();
-        if(Objects.nonNull(post.getReactions())) {
-            post.getReactions().forEach(reaction -> reactionsResp.add(ReactionResponseDto.builder()
-                            .id(reaction.getId())
-                            .type(reaction.getType())
-                    .build()));
-        }
 
         PostResponseDto response = PostResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .slug(post.getSlug())
                 .status(post.getStatus())
-                .createAt(post.getCreateAt())
+                .createAt(DateFormatter.getInstance().format(post.getCreateAt()))
                 .user(UserResponseDto.builder()
                         .id(author.getId())
                         .username(author.getUsername())
@@ -86,7 +81,6 @@ public class PostServiceImpl implements PostService {
                         .enabled(author.isEnabled())
                         .build())
                 .tags(tagsResp)
-                .reactions(reactionsResp)
                 .build();
 
         return ResponseEntity.ok(
@@ -102,7 +96,7 @@ public class PostServiceImpl implements PostService {
     public ResponseEntity<ApiResponseDto<?>> delete(Long id) {
         postRepository.deleteById(id);
 
-        return  ResponseEntity.ok(
+        return ResponseEntity.ok(
                 ApiResponseDto.builder()
                         .status(String.valueOf(ResponseStatus.SUCCESS))
                         .message("Post deleted successfully!")
@@ -121,11 +115,11 @@ public class PostServiceImpl implements PostService {
 
         String updatedStatus = req.getStatus();
 
-        if(String.valueOf(PostStatus.DELETE).equals(updatedStatus)) {
+        if (String.valueOf(PostStatus.DELETE).equals(updatedStatus)) {
             post.setStatus(String.valueOf(PostStatus.DELETE));
         } else if (String.valueOf(PostStatus.PENDING).equals(updatedStatus)) {
             post.setStatus(String.valueOf(PostStatus.PENDING));
-        } else if(String.valueOf(PostStatus.CREATED).equals(updatedStatus)) {
+        } else if (String.valueOf(PostStatus.CREATED).equals(updatedStatus)) {
             post.setStatus(String.valueOf(PostStatus.CREATED));
         }
 
@@ -143,23 +137,10 @@ public class PostServiceImpl implements PostService {
     public ResponseEntity<ApiResponseDto<?>> getAllPost() {
         List<Post> posts = postRepository.findAllWithTags();
 
-        List<PostResponseDto> result = convertToDto(posts);
-
-        return ResponseEntity.ok(
-                ApiResponseDto.builder()
-                        .status(String.valueOf(ResponseStatus.SUCCESS))
-                        .response(result)
-                        .message("")
-                        .build()
-        );
-    }
-
-    @Override
-    public ResponseEntity<ApiResponseDto<?>> findAllWithPaging(String title, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<Post> posts = postRepository.findByTitle(title, pageable).getContent();
-
-        List<PostResponseDto> result = convertToDto(posts);
+        List<PostResponseDto> result = new ArrayList<>();
+        for(Post post: posts) {
+            result.add(convertToDto(post));
+        }
 
         return ResponseEntity.ok(
                 ApiResponseDto.builder()
@@ -175,44 +156,50 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("Post not found with id " + id));
 
-        PostResponseDto resp = PostResponseDto.builder()
+        PostResponseDto resp = convertToDto(post);
 
-                .build();
-        return null;
+        return ResponseEntity.ok(
+                ApiResponseDto.builder()
+                        .status(String.valueOf(ResponseStatus.SUCCESS))
+                        .response(resp)
+                        .message("Found post with id " + id)
+                        .build()
+        );
     }
 
-    private List<PostResponseDto> convertToDto(List<Post> posts) {
-        List<PostResponseDto> result = new ArrayList<>();
+    private PostResponseDto convertToDto(Post post) {
+        List<TagResponseDto> tagResp = post.getTags().stream()
+                .map(tag -> TagResponseDto.builder()
+                        .id(tag.getId())
+                        .name(tag.getName())
+                        .status(tag.getStatus())
+                        .build())
+                .collect(Collectors.toList());
 
-        for (Post post: posts) {
-            List<TagResponseDto> tagResp = post.getTags().stream()
-                    .map(tag -> TagResponseDto.builder()
-                            .id(tag.getId())
-                            .name(tag.getName())
-                            .status(tag.getStatus())
-                            .build())
-                    .collect(Collectors.toList());
+        List<ReactionResponseDto> responseResp = post.getReactions().stream()
+                .map(reaction -> ReactionResponseDto.builder()
+                        .id(reaction.getId())
+                        .type(reaction.getType())
+                        .build()).collect(Collectors.toList());
 
-            List<ReactionResponseDto> responseResp = post.getReactions().stream()
-                    .map(reaction -> ReactionResponseDto.builder()
-                            .id(reaction.getId())
-                            .type(reaction.getType())
-                            .build()).collect(Collectors.toList());
+        User author = post.getUser();
 
-            PostResponseDto responseDto = PostResponseDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .createAt(post.getCreateAt())
-                    .updateAt(post.getUpdatedAt())
-                    .status(post.getStatus())
-                    .tags(tagResp)
-                    .reactions(responseResp)
-                    .build();
-
-            result.add(responseDto);
-        }
-
-        return result;
+        return PostResponseDto.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .slug(post.getSlug())
+                .content(post.getContent())
+                .createAt(Objects.nonNull(post.getCreateAt()) ? DateFormatter.getInstance().format(post.getCreateAt()) : null)
+                .updateAt(Objects.nonNull(post.getUpdatedAt()) ? DateFormatter.getInstance().format(post.getUpdatedAt()) : null)
+                .user(UserResponseDto.builder()
+                        .username(author.getUsername())
+                        .id(author.getId())
+                        .email(author.getEmail())
+                        .enabled(author.isEnabled())
+                        .build())
+                .status(post.getStatus())
+                .tags(tagResp)
+                .reactions(responseResp)
+                .build();
     }
 }

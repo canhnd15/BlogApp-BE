@@ -26,7 +26,7 @@ public class Post {
     private String status;
 
     @Column(nullable = false, name = "draft")
-    private Integer draft;
+    private Boolean isDraft;
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;

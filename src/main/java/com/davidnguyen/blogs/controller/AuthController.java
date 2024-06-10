@@ -6,6 +6,7 @@ import com.davidnguyen.blogs.dtos.SignUpRequestDto;
 import com.davidnguyen.blogs.exceptions.RoleNotFoundException;
 import com.davidnguyen.blogs.exceptions.UserAlreadyExistsException;
 import com.davidnguyen.blogs.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "API for sign-in and sign-up")
 public class AuthController {
     @Autowired
     private AuthService authService;
@@ -30,5 +32,4 @@ public class AuthController {
     public ResponseEntity<ApiResponseDto<?>> signInUser(@RequestBody @Valid SignInRequestDto signInRequestDto){
         return authService.signIn(signInRequestDto);
     }
-
 }

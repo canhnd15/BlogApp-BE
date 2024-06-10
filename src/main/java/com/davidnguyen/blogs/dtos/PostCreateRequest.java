@@ -10,14 +10,18 @@ import java.util.List;
 @Data
 @Builder
 public class PostCreateRequest {
-    @NotBlank(message = "Post's title is not allow blank.")
-    @NotNull(message = "Post's title is required.")
+    @NotBlank(message = "Title is not allow blank.")
+    @NotNull(message = "Title is required.")
     private String title;
 
     private Boolean isDraft;
 
     @NotNull(message = "Post's title is required.")
     private String content;
+
+    @NotNull(message = "Slug is required.")
+    @NotBlank(message = "Slug is not allow blank.")
+    private String slug;
 
     @NotNull(message = "User's id is required.")
     private Long userId;
