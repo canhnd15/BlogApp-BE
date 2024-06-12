@@ -30,6 +30,6 @@ public class Tag {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.REMOVE)
     private Set<Post> posts;
 }
