@@ -12,19 +12,16 @@ jobs:
 
     services:
       mariadb:
-        image: mariadb:latest
-        env:
+        image: mariadb
+        environment:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: blog
-          MYSQL_USER: root
+          MYSQL_USER: user
           MYSQL_PASSWORD: root
         ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          - "3306:3306"
+        volumes:
+          - data:/var/lib/mysql
 
     steps:
       - name: Checkout code
