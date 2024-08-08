@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-deploy:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     name: Build and Deploy a blog application
     runs-on: ubuntu-latest
 
