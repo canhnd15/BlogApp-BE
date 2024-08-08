@@ -33,6 +33,9 @@ jobs:
           distribution: 'corretto'
           java-version: 17
 
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
 #      - name: Unit Tests
 #        run: mvn -B test --file pom.xml
 #
