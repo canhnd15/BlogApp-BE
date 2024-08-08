@@ -13,7 +13,7 @@ jobs:
     services:
       mariadb:
         image: mariadb
-        environment:
+        env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: blog
           MYSQL_USER: user
