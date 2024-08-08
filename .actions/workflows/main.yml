@@ -3,7 +3,7 @@ name: Build and Deploy a blog application
 on:
   push:
     branches:
-      - master
+      - cicd-pipeline
 
 jobs:
   build-deploy:
