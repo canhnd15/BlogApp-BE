@@ -4,25 +4,12 @@ on:
   push:
     branches:
       - cicd-pipeline
+  workflow_dispatch:
 
 jobs:
   build-deploy:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     name: Build and Deploy a blog application
     runs-on: ubuntu-latest
-
-#    services:
-#      mariadb:
-#        image: mariadb
-#        env:
-#          MYSQL_ROOT_PASSWORD: root
-#          MYSQL_DATABASE: blog
-#          MYSQL_USER: user
-#          MYSQL_PASSWORD: root
-#        ports:
-#          - "3306:3306"
-#        volumes:
-#          - data:/var/lib/mysql
 
     steps:
       - name: Checkout code
@@ -36,14 +23,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
-
-#      - name: Unit Tests
-#        run: mvn -B test --file pom.xml
-#
-#      - name: Build
-#        run: |
-#          mvn clean
-#          mvn -B package --file pom.xml
 
       - name: Build Docker image
         uses: docker/build-push-action@v2
@@ -66,13 +45,3 @@ jobs:
           dockerfile: Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:1.0.2
-
-#      - name: Build with Maven
-#        run: mvn clean package -DskipTests
-
-#      - name: Run tests
-#        env:
-#          SPRING_DATASOURCE_URL: jdbc:mariadb://localhost:3306/blog
-#          SPRING_DATASOURCE_USERNAME: root
-#          SPRING_DATASOURCE_PASSWORD: root
-#        run: mvn test
